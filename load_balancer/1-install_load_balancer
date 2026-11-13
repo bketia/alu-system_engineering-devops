@@ -30,4 +30,8 @@ backend http_back
     server 7108-web-01 18.175.244.187:80 check
     server 7108-web-02 3.8.123.78:80 check
 CONF
+if haproxy -v | grep -qE 'version (1\.9|[2-9])'; then
+    sed -i '/^    daemon$/a\    h1-case-adjust x-served-by X-Served-By' /etc/haproxy/haproxy.cfg
+    sed -i '/^    default_backend http_back$/i\    option h1-case-adjust-bogus-client' /etc/haproxy/haproxy.cfg
+fi
 service haproxy restart
